@@ -17,7 +17,8 @@ GO_BIN=/usr/local/go/bin/go
 all: prereq app
 
 prereq:
-	ansible-galaxy install fubarhouse.golang
+	ansible-galaxy install fubarhouse.golang,v2.7.3
+	ansible-galaxy install andrewrothstein.kubectl,v1.1.15
 	ansible-playbook --ask-become-pass scripts/prereq/playbook.yml
 
 app:
