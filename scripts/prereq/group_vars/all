@@ -1,0 +1,7 @@
+# Author: Mihai Vultur
+#-- those two are required by our app
+go_get:
+- name: mysql
+  url: github.com/go-sql-driver/mysql
+- name: mux
+  url: github.com/gorilla/mux
