@@ -1,0 +1,8 @@
+# temporary files
+*.log
+*.bak
+*~
+.*.swp
+
+# don't add this for now
+INFO.md
