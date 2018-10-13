@@ -19,6 +19,7 @@ all: prereq app
 prereq:
 	ansible-galaxy install fubarhouse.golang,v2.7.3
 	ansible-galaxy install andrewrothstein.kubectl,v1.1.15
+	ansible-galaxy install geerlingguy.docker,v2.5.1
 	ansible-playbook --ask-become-pass scripts/prereq/playbook.yml
 
 app:

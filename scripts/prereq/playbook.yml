@@ -8,4 +8,5 @@
   roles:
       - role: fubarhouse.golang
       - role: andrewrothstein.kubectl
+      - role: geerlingguy.docker
 
