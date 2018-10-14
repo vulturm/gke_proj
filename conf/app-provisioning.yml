@@ -1,0 +1,51 @@
+# The following code is for creating single-instance of golangapp Deployment and Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: golangapp
+  labels:
+    app: golangapp
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: golangapp
+    tier: frontend
+  type: NodePort #any service of type NodePort can be accessed over that IP address
+---
+#This it to deploy golangapp container to Kubernetes
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: golangapp
+  labels:
+    app: golangapp
+spec:
+  selector:
+    matchLabels:
+      app: golangapp
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: golangapp
+        tier: frontend
+    spec:
+      containers:
+      - image: gcr.io/${PROJECT_NAME}/golangapp:1.1
+        name: golangapp
+        imagePullPolicy: "Always"
+        env:
+        - name: APP_DB_USERNAME
+          value: root
+        - name: APP_DB_PASSWORD
+          value: cevaparola
+        - name: APP_DB_NAME
+          value: db
+        - name: APP_DB_ADDRESS
+          value: golangdata-mysql
+        ports:
+        - containerPort: 8080
+          name: golangapp

@@ -1,0 +1,12 @@
+---
+- name: Server installation
+  hosts: localhost
+  strategy: debug
+  remote_user: root
+  become: yes
+
+  roles:
+      - role: fubarhouse.golang
+      - role: andrewrothstein.kubectl
+      - role: geerlingguy.docker
+
