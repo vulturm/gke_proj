@@ -1,4 +1,39 @@
+## High level design
 
+* Description:
+    - We have a generic API service storing users that needs to be deployed in k8s.
+    - App built up on Golang and using MySQL as data storage.
+
+---
+* Considerations:
+    - Golang application:
+        - will get it's configuration from environment variables.
+        - stateless application.
+    - Persistence:
+        - Is assured by MySQL RDS engine.
+        - PV needs to be claimed and mounted for data persistence.
+
+
+---
+* Deployment flow:
+    - Persistance layer:
+        - Is being configured first, as this is a prerequsite for the app.
+        - PV claim is configured so that it can only be mounted once.
+        - MySQL pod is being started using mysql56 docker image with it's `/var/lib/mysql` configured to persist.
+    - Golang application:
+        - Is compiled as a single statically linked binary without dependencies.
+        - Bundled inside a docker image and pushed in GKE image registry.
+        - Application pod is configured to use the aforementioned image.
+
+
+
+---
+* Interractions:
+    |PVolume /var/lib/mysql| --> [MySQL Pod TCP 3306] <-- (Service TCP 3306)  <-------------- [App Pod TCP 8080] <-- (Service TCP 80)   <---- [CURL Client/HTTP Calls]
+
+---
+* Validation/Tests: 
+```
 / # curl --header "Content-Type: application/json" --request POST --data '{"name":"test user 2","age":40}' http://localhost:8080/user
 {"id":2,"name":"test user 2","age":40}/ # 
 / # curl --header "Content-Type: application/json" --request POST --data '{"name":"test user 3","age":43}' http://localhost:8080/user
@@ -46,4 +81,10 @@
 [    0.000000] DMI: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 [    0.000000] Hypervisor detected: KVM
 
+```
 
+---
+## **License and Authors**
+
+Maintainer:       'Mihai Vultur'<br>
+License:          'GPL v3'<br>
