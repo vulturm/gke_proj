@@ -50,7 +50,7 @@ deployimage:
 	docker push gcr.io/${PROJECT_NAME}/golangapp:1.1
 
 startapp:
-
+	kubectl apply -f conf/app-provisioning.yml
 
 clean:
 	rm -f app
