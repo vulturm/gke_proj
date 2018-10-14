@@ -11,7 +11,8 @@
 #   Makefile that will help us manage our go app provisioning.
 
 
-PROJECT_NAME="ancient-script-219311"
+PROJECT_NAME=ancient-script-219311
+export PROJECT_NAME
 
 .PHONY: all prereq mysql db seed buildapp deployimage startapp
 
@@ -50,7 +51,7 @@ deployimage:
 	docker push gcr.io/${PROJECT_NAME}/golangapp:1.1
 
 startapp:
-	kubectl apply -f conf/app-provisioning.yml
+	envsubst < conf/app-provisioning.yml | kubectl apply -f -
 
 clean:
 	rm -f app
