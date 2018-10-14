@@ -1,0 +1,63 @@
+# the following code is for creating single-instance mysql deployment & service
+apiVersion: v1
+kind: Service
+metadata:
+  name: golangapp-mysql
+  labels:
+    app: golangapp
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: golangapp
+    tier: mysql
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: golangapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment #Single-instance MySQL Deployment
+metadata:
+  name: golangapp-mysql
+  labels:
+    app: golangapp
+spec:
+  selector:
+    matchLabels:
+      app: golangapp
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: golangapp
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:5.6 
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "cevaparola"
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+            claimName: mysql-pv-claim
