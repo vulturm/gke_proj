@@ -2,14 +2,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: golangapp-mysql
+  name: golangdata-mysql
   labels:
-    app: golangapp
+    app: golangdata
 spec:
   ports:
     - port: 3306
   selector:
-    app: golangapp
+    app: golangdata
     tier: mysql
   clusterIP: None
 ---
@@ -18,7 +18,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: mysql-pv-claim
   labels:
-    app: golangapp
+    app: golangdata
 spec:
   accessModes:
     - ReadWriteOnce
@@ -29,20 +29,20 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment #Single-instance MySQL Deployment
 metadata:
-  name: golangapp-mysql
+  name: golangdata-mysql
   labels:
-    app: golangapp
+    app: golangdata
 spec:
   selector:
     matchLabels:
-      app: golangapp
+      app: golangdata
       tier: mysql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: golangapp
+        app: golangdata
         tier: mysql
     spec:
       containers:

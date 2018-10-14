@@ -10,11 +10,14 @@
 # Description:
 #   Makefile that will help us manage our go app provisioning.
 
-.PHONY: all prereq build db seed
+
+PROJECT_NAME="ancient-script-219311"
+
+.PHONY: all prereq mysql db seed buildapp deployimage startapp
 
 GO_BIN=/usr/local/go/bin/go
 
-all: prereq build db seed
+all: prereq mysql deploy
 
 prereq:
 	ansible-galaxy install fubarhouse.golang,v2.7.3
@@ -22,9 +25,9 @@ prereq:
 	ansible-galaxy install geerlingguy.docker,v2.5.1
 	ansible-playbook --ask-become-pass scripts/prereq/playbook.yml
 
-build:
+buildapp:
 	CGO_ENABLED=0 GOOS=linux ${GO_BIN} build -a -installsuffix cgo -ldflags '-w' src/app/*.go
-
+	docker build -t gcr.io/${PROJECT_NAME}/golangapp:1.1 .
 
 db:
 	@echo "Creating mysql pod"
@@ -39,6 +42,15 @@ seed:
 	kubectl -n default exec -i ${MYSQL_POD} -- /tmp/mysql_seed.sh
 
 mysql: db seed
+
+deploy: buildapp deployimage startapp
+
+
+deployimage:
+	docker push gcr.io/${PROJECT_NAME}/golangapp:1.1
+
+startapp:
+
 
 clean:
 	rm -f app
